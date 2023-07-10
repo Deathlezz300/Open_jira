@@ -2,13 +2,17 @@ import type { NextPage } from "next"
 import {Card, CardContent, CardHeader, Grid, Typography} from '@mui/material'
 import { Layout } from "@/layouts/Layout"
 import { EntryList } from "@/components/EntryList"
-import { useContext } from 'react';
+import { useContext,useEffect } from 'react';
 import { EntriesContext } from "@/Context/Entries/EntriesContext";
 import { NewEntry } from "@/components/NewEntry";
 
 const HomePage:NextPage=()=>{
 
-  const {entries}=useContext(EntriesContext);
+  const {entries,refreshEntries}=useContext(EntriesContext);
+  
+  useEffect(()=>{
+    refreshEntries();
+  },[])
 
 
   return (

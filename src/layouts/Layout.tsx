@@ -5,7 +5,7 @@ import Head from 'next/head'
 import {FC} from 'react'
 
 interface props{
-    children:JSX.Element,
+    children:JSX.Element | JSX.Element[],
     title?:string
 }
 

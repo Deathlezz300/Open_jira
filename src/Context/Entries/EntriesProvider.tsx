@@ -1,9 +1,9 @@
-import { FC, useReducer,useEffect } from 'react';
+import { FC, useReducer } from 'react';
 import { EntriesContext } from './EntriesContext';
 import { EntryActionType, entriesReducer } from './EntriesReducer';
 import { entry, entryStatus } from '@/Interfaces/EntrisInterfaces';
 import entriesApi from '@/api/entriesApi';
-import { UpdateStatus, onAddEntry, onLoadEntries } from '@/Helpers/Entries';
+import { UpdateStatus, onAddEntry, onLoadEntries,UpdateEntry } from '@/Helpers/Entries';
 
 export interface entries {
   entries:entry[]
@@ -43,6 +43,20 @@ export const EntriesProvider: FC<props> = ({ children }) => {
       }
     }
 
+    const OnUpdateEntry=async(entry:entry)=>{
+
+      const entrada=await UpdateEntry(entry);
+
+      if(entrada){
+        const action:EntryActionType={
+          type:'change-entry',
+          payload:entrada
+        }
+        dispatch(action);
+      }
+
+    }
+
     const refreshEntries=async()=>{
           const action=await onLoadEntries() as EntryActionType;
           dispatch(action);    
@@ -50,12 +64,9 @@ export const EntriesProvider: FC<props> = ({ children }) => {
 
 
 
-    useEffect(()=>{
-      refreshEntries();
-    },[])
 
   return (
-    <EntriesContext.Provider value={{...state,AddEntry,onChangeStatus}}>
+    <EntriesContext.Provider value={{...state,AddEntry,onChangeStatus,refreshEntries,OnUpdateEntry}}>
       {children}
     </EntriesContext.Provider>
   );

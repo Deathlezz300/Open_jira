@@ -56,3 +56,21 @@ export const UpdateStatus=async(_id:string,status:entryStatus)=>{
     }
 }
 
+export const UpdateEntry=async(entry:entry):Promise<entry | null>=>{
+    try{
+
+        console.log(entry);
+
+        const {data}= await entriesApi.put<peticion>(`/entries/${entry._id}`,{...entry});
+
+        return data.entry as entry;
+
+
+    }catch(error){
+        console.log(error);
+
+        return null;
+
+    }
+}
+

@@ -10,11 +10,12 @@ export type EntryActionType =
     | { type: 'entry-add',payload:entry } 
     | { type: 'update-entry',payload:dataPayload }
     | {type:'set-entries',payload:entry[]}
+    | {type:'change-entry',payload:entry}
 
 
 export const entriesReducer = ( state: entries, action: EntryActionType ): entries => {
 
-   switch (action.type) {
+   switch (action?.type) {
       case 'entry-add':
          return {
             ...state,
@@ -41,6 +42,18 @@ export const entriesReducer = ( state: entries, action: EntryActionType ): entri
                  return ent;
              })
            }
+
+      case 'change-entry':
+         return{
+            ...state,
+            entries:state.entries.map(ent=>{
+               if(ent._id===action.payload._id){
+                  return action.payload;
+               }
+
+               return ent;
+            })
+         }
 
        default:
           return state;

@@ -24,6 +24,9 @@ export default async function Handler(req:NextApiRequest,res:NextApiResponse<Dat
             case 'PUT':
                 return UpdateStatus(req,res)
             
+            case 'GET':
+                return getEntry(req,res)
+
             default:
                 return res.status(400).json({
                     ok:false,
@@ -34,9 +37,46 @@ export default async function Handler(req:NextApiRequest,res:NextApiResponse<Dat
 }
 
 
+const getEntry=async(req:NextApiRequest,res:NextApiResponse<Data>)=>{
+
+    const {id}=req.query;
+
+    try{
+
+        await connectMongo();
+
+
+        const entry=await EntryModel.findById(id);
+
+        if(!entry){
+            return res.status(400).json({
+                ok:false,
+                message:'No existe esta entrada'
+            });
+        };
+
+
+        await disconnectMongose();
+
+        return res.status(200).json({
+            ok:true,
+            entry
+        })
+
+
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({
+            ok:false,
+            message:'Ha ocurrido un error'
+        })
+    }
+
+
+}
+
 const UpdateStatus=async(req:NextApiRequest,res:NextApiResponse<Data>)=>{
 
-    const {status}=req.body;
 
     const {id:_id}=req.query;
 
@@ -54,14 +94,14 @@ const UpdateStatus=async(req:NextApiRequest,res:NextApiResponse<Data>)=>{
             })
         };
 
-        const newEntry:IEntry={
-            description:entry.description,
-            status:status,
-            createdAt:entry.createdAt,
-        }
+        const {
+            description=entry.description,
+            status=entry.status
+
+        }=req.body;
 
 
-        const newEntryUpdated=await EntryModel.findByIdAndUpdate<IEntry>(_id,newEntry,{runValidators:true,new:true});
+        const newEntryUpdated=await EntryModel.findByIdAndUpdate<IEntry>(_id,{description,status},{runValidators:true,new:true});
 
         await disconnectMongose();
 
